@@ -1,0 +1,24 @@
+services:
+  # Backend FastAPI service
+  - type: web
+    name: launchforge-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: backend
+    envVars:
+      - key: CORS_ORIGINS
+        value: https://launchforge-ai.vercel.app,http://localhost:5173
+      - key: DATABASE_URL
+        value: sqlite:///./launchforge.db
+
+  # Frontend static site
+  - type: web
+    name: launchforge-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://launchforge-api.onrender.com
